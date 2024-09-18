@@ -1,0 +1,37 @@
+services:
+  backend:
+    image: task-backend
+    container_name: task-backend
+    pull_policy: never
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner 
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongo
+  
+  frontend:
+    image: task-frontend
+    container_name: task-frontend
+    pull_policy: never
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    
+  mongo:
+    image: mongo:latest
+    container_name: mongo-db
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    restart: always
+
+volumes:
+  mongo-data:

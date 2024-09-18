@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>HARDIK TRADERS - CLIENT MANAGEMENT DASHBOARD</h1>
+    </header>
+
+    <div class="dashboard-controls"></div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by Client Name">
+            <button id="search-button" onclick="searchJobs()">Search</button>
+        </div>
+        <button id="new-job-sheet" onclick="createJob()">New Job Sheet</button>
+    </div>
+    <table id="jobs-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Received Date</th>
+                <th>Inventory Received</th>
+                <th>Issue</th>
+                <th>Notes</th>
+                <th>Technician</th>
+                <th>Deadline</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+    <footer>
+        <p>&copy; 2024 Hardik Traders</p>
+    </footer>
+
+    <script>
+        let all_jobs = [];
+        async function fetchJobs() {
+            try {
+                const response = await fetch('http://localhost:8000/jobs');
+                if (!response.ok) throw new Error('Network response was not ok');
+                all_jobs = await response.json();  // Store all jobs in the variable
+                console.log(all_jobs);
+                displayJobs(all_jobs);  // Display all jobs initially
+            } catch (error) {
+                console.error('Failed to fetch jobs:', error);
+            }
+        }
+        function displayJobs(jobs) {
+            const tableBody = document.querySelector('#jobs-table tbody');
+            tableBody.innerHTML = '';
+
+            jobs.forEach(job => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${job._id}</td>
+                    <td>${job.name}</td>
+                    <td>${job.phone}</td>
+                    <td>${job.rdate}</td>
+                    <td>${job.inventory}</td>
+                    <td>${job.issue}</td>
+                    <td>${job.notes}</td>
+                    <td>${job.technician}</td>
+                    <td>${job.deadline}</td>
+                    <td>${job.amount}</td>
+                    <td>${job.status}</td>
+                    <td>
+                        <button onclick="viewJob('${job._id}')">View</button>
+                        <button onclick="editJob('${job._id}')">Edit</button>
+                        <button onclick="deleteJob('${job._id}')">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        function searchJobs() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+
+            if (query === '') {
+                displayJobs(all_jobs);  
+                return;
+            }
+
+            // Find all jobs where the name includes the search query
+            const filteredJobs = all_jobs.filter(job => job.name.toLowerCase().includes(query));
+            displayJobs(filteredJobs);
+        }
+
+
+        function viewJob(jobId) {
+            window.location.href = `view.html?jobId=${jobId}`; 
+        }
+
+        function createJob() {
+            window.location.href = 'create_job.html';
+        }
+        function editJob(jobId) {
+            window.location.href = `edit.html?jobId=${jobId}`;     
+        }
+
+        function deleteJob(jobId) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                // Implement the delete functionality here
+                // call the delete API
+
+                try{
+                    const response = fetch(`http://localhost:8000/delete_job/${jobId}`, {
+                        method: 'DELETE'
+                    });
+                }
+                catch(error){
+                    console.error('Error deleting job:', error);
+                    alert('Failed to delete job');
+                }
+
+                // we'll refresh the page after deleting the job
+                window.location.reload()
+            }
+        }
+
+
+        fetchJobs();
+    </script>
+</body>
+</html>

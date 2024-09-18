@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "task"
+version = "0.1.0"
+description = "An internship task"
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "motor"
+]
+
+[tool.setuptools.packages.find]
+where = ["./"]
+ 
+#  The  pyproject.toml  file is used to specify the build system and project metadata. The  build-system  section specifies the build system to use, which is  setuptools.build_meta  in this case. The  project  section specifies the project metadata, such as the project name, version, description, and required Python version. The  dependencies  field specifies the dependencies required by the project. The  tool.setuptools.packages.find  section specifies the location of the packages to include in the build. 
+#  Step 3: Create the FastAPI Application 
+#  In this step, we will create a FastAPI application that will serve as the backend for the application. 
+#  Create a new directory called  backend  in the root directory of the project. Inside the  backend  directory, create a new file called  main.py  and add the following code to it: 
+#  # File: backend/main.py

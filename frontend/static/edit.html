@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job</title>
+    <link rel="stylesheet" href="edit.css">
+</head>
+<body>
+    <h2>EDIT JOB SHEET</h2>
+    <form id="job-form" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="number" id="phone" name="phone">
+        </div>
+
+        <div class="form-group">
+            <label for="rdate">Received Date:</label>
+            <input type="date" id="rdate" name="rdate">
+        </div>
+
+        <div class="form-group">
+            <label for="inventory">Inventory Received:</label>
+            <input type="number" id="inventory" name="inventory">
+        </div>
+
+        <div class="form-group">
+            <label for="document">Upload Inventory Image/Document/Video:</label>
+            <!-- Allow the user to upload a file (document, image, video, etc.) -->
+            <input type="file" id="document" name="document" accept=".jpg,.jpeg,.png,.pdf,.mp4,.avi">
+        </div>
+
+        <div class="form-group">
+            <label for="issue">Reported Issue:</label>
+            <textarea id="issue" name="issue"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Client Notes:</label>
+            <textarea id="notes" name="notes"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="technician">Assigned Technician:</label>
+            <input type="text" id="technician" name="technician">
+        </div>
+
+        <div class="form-group">
+            <label for="deadline">Deadline:</label>
+            <input type="date" id="deadline" name="deadline">
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Estimated Amount:</label>
+            <input type="number" id="amount" name="amount">
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+    <div class="form-group">
+        <button onclick="goBack()">Cancel</button>
+    </div>
+<script>
+    
+    async function fetchJobDetails(jobId) {
+        try {
+            const response = await fetch(`http://localhost:8000/jobs/${jobId}`);
+            if (!response.ok) throw new Error('Failed to fetch job details');
+            const job = await response.json();
+
+            document.getElementById('name').value = job.name;
+            document.getElementById('phone').value = job.phone;
+            document.getElementById('rdate').value = job.rdate;
+            document.getElementById('inventory').value = job.inventory;
+            document.getElementById('issue').value = job.issue;
+            document.getElementById('notes').value = job.notes;
+            document.getElementById('technician').value = job.technician;
+            document.getElementById('deadline').value = job.deadline;
+            document.getElementById('amount').value = job.amount;
+            document.getElementById('status').value = job.status;
+        } catch (error) {
+            console.error('Error fetching job details:', error);
+            alert('Failed to fetch job details');
+        }
+    }
+    function goBack() {
+            window.location.href = 'index.html';  
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('jobId');
+    if (jobId) {
+        fetchJobDetails(jobId);  // Fetch job details when the page loads
+    } else {
+        alert('No Job ID found');
+    }
+
+    const form = document.getElementById('job-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        try {
+            const response = await fetch(`http://localhost:8000/job_Edit/${jobId}`, {
+                method: 'PUT',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Job sheet updated successfully');
+                window.location.href = 'index.html';  
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to update job sheet: ${errorData.detail || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error updating job sheet:', error);
+            alert('An unexpected error occurred while updating the job sheet');
+        }
+    });
+</script>
+    
+</body>
+</html>

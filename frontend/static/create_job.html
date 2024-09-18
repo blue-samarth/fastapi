@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a new Job</title>
+    <link rel="stylesheet" href="create_job.css">
+</head>
+<body>
+    <h2>CREATE NEW JOB SHEET</h2>
+    <form id="job-form" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="number" id="phone" name="phone" required>
+        </div>
+
+        <div class="form-group">
+            <label for="rdate">Received Date:</label>
+            <input type="date" id="rdate" name="rdate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="inventory">Inventory Received:</label>
+            <input type="number" id="inventory" name="inventory" required>
+        </div>
+
+        <div class="form-group">
+            <label for="document">Upload Inventory Image/Document/Video:</label>
+            <!-- Allow the user to upload a file (document, image, video, etc.) -->
+            <input type="file" id="document" name="document" accept=".jpg,.jpeg,.png,.pdf,.mp4,.avi">
+        </div>
+
+        <div class="form-group">
+            <label for="issue">Reported Issue:</label>
+            <textarea id="issue" name="issue" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Client Notes:</label>
+            <textarea id="notes" name="notes" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="technician">Assigned Technician:</label>
+            <input type="text" id="technician" name="technician" required>
+        </div>
+
+        <div class="form-group">
+            <label for="deadline">Deadline:</label>
+            <input type="date" id="deadline" name="deadline" required>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Estimated Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit">Save Job Sheet</button>
+        </div>
+        <div class="form-group">
+            <button type="button" onclick="goBack()">Cancel</button>
+        </div>
+    </form>
+
+    
+
+    <script>
+        const form = document.getElementById('job-form');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('http://localhost:8000/createjob', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Job sheet created successfully');
+                    form.reset(); // Clear the form after successful submission
+                    goBack(); 
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to create job sheet: ${errorData.detail || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error creating job sheet:', error);
+                alert('An unexpected error occurred while creating the job sheet');
+            }
+        });
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
