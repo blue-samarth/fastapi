@@ -1,0 +1,62 @@
+# Here we will handle the entire database deployment
+
+# first we will create a PersistentVolumeClaim to store the data among the pods
+# then we will create a Service to expose the database to the backend
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # only one pod can read and write to the volume at a time This will help us to avoid data corruption
+  resources:
+    requests:
+      storage: 500Mi # 500MB of storage
+
+---
+
+# Now we will create a deployment for the mongo database 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          ports:
+            - containerPort: 27017 # the port that the mongo database is running on (internal port)
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db # the path where the data will be stored in the container
+      volumes:
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+
+---
+
+# Now we will create a service to expose the mongo database to the backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector:
+    app: mongo # This should match the label of the pod from deployment
+  ports:
+    - protocol: TCP
+      port: 27017 # the port that the service will be running on (external port)
+      targetPort: 27017 # the port that the service will be forwarding to (internal port)
+  type: ClusterIP # This will expose the service only within the cluster
+
