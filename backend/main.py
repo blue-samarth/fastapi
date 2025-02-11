@@ -12,7 +12,8 @@ from bson import ObjectId , Binary
 
 # Synchronous MongoDB client for GridFS
 try:
-    sync_client = MongoClient("mongodb://mongo:27017")
+    # sync_client = MongoClient("mongodb://mongo:27017")
+    sync_client: MongoClient = MongoClient("mongodb://mongo-service:27017")
     pymongo_db = sync_client["client_list"]  # Replace with your preferred DB name
     fs = GridFS(pymongo_db)
     print("Connected to MongoDB and GridFS")
@@ -20,7 +21,8 @@ except Exception as e:
     print("Failed to connect to MongoDB/GridFS:", e)
 
 # Asynchronous MongoDB client
-client = AsyncIOMotorClient("mongodb://mongo:27017", uuidRepresentation="standard")
+# client = AsyncIOMotorClient("mongodb://mongo:27017", uuidRepresentation="standard")
+client: AsyncIOMotorClient = AsyncIOMotorClient("mongodb://mongo-service:27017", uuidRepresentation="standard")
 db: AsyncIOMotorDatabase = client["client_list"]  # Same DB name as above, will be created automatically
 
 app = FastAPI()
