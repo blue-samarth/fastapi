@@ -44,7 +44,7 @@ class JOB(BaseModel):
     phone: int
     rdate: str
     inventory: int
-    document: Optional[str] 
+    document: Optional[str] = None
     issue: str
     notes: str
     technician: str
