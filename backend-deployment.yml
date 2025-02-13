@@ -18,7 +18,7 @@ spec:
         spec:
             containers:
             - name: backend
-              image: backend:latest
+              image: blue37sam/todo-fast-api-backend:latest
               ports:
               - containerPort: 8000
 
@@ -45,7 +45,8 @@ spec:
     - protocol: TCP
       port: 8000 # Expose the service on port 8000 (That is external port)
       targetPort: 8000 # Forward the request to port 8000 of the pod (That is internal port)
-    type: LoadBalancer
+    # type: LoadBalancer
+    type: NodePort # Use NodePort to expose the service for local testing
 
 
 # Now we have both the backend and its service done we will now add the database service for the backend to connect to
