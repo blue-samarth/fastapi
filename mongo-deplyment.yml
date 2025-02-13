@@ -8,6 +8,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mongo-pvc
 spec:
+  storageClassName: standard # the type of storage to be used
   accessModes:
     - ReadWriteOnce # only one pod can read and write to the volume at a time This will help us to avoid data corruption
   resources:
